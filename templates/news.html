@@ -18,8 +18,9 @@ News
         <tr>
             <td>id</td>
             <td>Заголовок </td>
-            <td> Дата публикации</td>
-            <td> Содержание</td>
+            <td>Дата публикации</td>
+            <td>Содержание</td>
+            <td>Категория</td>
         </tr>
         {% for n in news %}
         <tr>
@@ -27,6 +28,7 @@ News
             <td>{{ n.title|truncatechars:40|censor }}</td>
             <td>{{ n.dateCreation }}</td>
             <td>{{ n.text|truncatechars:20|censor }}</td>
+            <td>{{n.categoryType}}</td>
         </tr>
         {% endfor %}
     </table>
