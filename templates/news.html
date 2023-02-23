@@ -14,6 +14,15 @@ News
     <h1>Все новости</h1>
     <h5>Количество новостей: {{ news|length }}</h5>
 
+    {% if perms.News.new_create or perms.News.article_create %}
+    <a href="{% url 'new_create' %}">Добавить Новость</a>
+    <a href="{% url 'article_create' %}">Добавить Статью</a>
+
+
+
+    {% endif %}
+
+
     <table>
         <tr>
             <td>id</td>
@@ -21,15 +30,45 @@ News
             <td>Дата публикации</td>
             <td>Содержание</td>
             <td>Категория</td>
+
+                {% if perms.News.new_create or perms.News.article_create %}
+                <td>Действия</td>
+                {% endif %}
+            <td>Категория</td>
+
         </tr>
         {% for n in news %}
         <tr>
             <td>{{ n.id }}</td>
-            <td>{{ n.title|truncatechars:40|censor }}</td>
+            <td>{{ n.title|truncatechars:20|censor }}</td>
             <td>{{ n.dateCreation }}</td>
-            <td>{{ n.text|truncatechars:20|censor }}</td>
+            <td><a href="{% url 'post_detail' pk=n.id %}">{{ n.text|truncatechars:40|censor }}</a></td>
             <td>{{n.categoryType}}</td>
+            <td>
+            {% if n.categoryType == 'NV' %}
+
+                {% if perms.News.new_edit %}
+                    <a href="{% url 'new_edit' pk=n.id %}">Изменить /</a>
+                {% endif %}
+                {% if perms.News.new_delete %}
+                    <a href="{% url 'new_delete' n.id %}">Удалить новость</a>
+                {% endif %}
+            {% elif n.categoryType == 'AR' %}
+                {% if perms.News.article_edit %}
+                    <a href="{% url 'article_edit' pk=n.id %}">Изменить /</a>
+                {% endif %}
+                {% if perms.News.article_delete %}
+                    <a href="{% url 'article_delete' n.id %}">Удалить статью</a>
+                {% endif %}
+            {%endif%}
+
+            </td>
+            {% for cat in n.category.all %}
+           <td> <a> {{ cat }} </a> </td>
+            {% endfor %}
         </tr>
+
+
         {% endfor %}
     </table>
 {% else %}
@@ -55,4 +94,5 @@ News
            <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
        {% endif %}
    {% endif %}
+
 {% endblock content %}
